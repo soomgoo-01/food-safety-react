@@ -10,6 +10,7 @@ import NoncompliantScreen from "./components/NoncompliantScreen.jsx";
 import ImportScreen from "./components/ImportScreen.jsx";
 import NewsScreen from "./components/NewsScreen.jsx";
 import VocScreen from "./components/VocScreen.jsx";
+import PaymentScreen from "./components/PaymentScreen.jsx";
 
 export default function App() {
   const { profile } = useAuth();
@@ -218,11 +219,7 @@ export default function App() {
           {!loading && screen === "noncompliant" && <NoncompliantScreen noncompliant={noncompliant} />}
           {!loading && screen === "import" && <ImportScreen importRisk={importRisk} />}
           {!loading && screen === "news" && <NewsScreen news={news} />}
-          {screen === "report" && (
-            <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 32, textAlign: "center", color: "var(--fg3)" }}>
-              알림 &amp; 리포트 화면은 2단계 구현 예정입니다.
-            </div>
-          )}
+          {screen === "report" && <PaymentScreen />}
           {screen === "voc" && <VocScreen />}
         </main>
       </div>
