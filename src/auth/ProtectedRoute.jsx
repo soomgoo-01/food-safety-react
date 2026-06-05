@@ -1,7 +1,8 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthContext.jsx";
+import { supabase } from "../supabase.js";
 
-export default function AdminRoute({ children }) {
+export default function ProtectedRoute({ children }) {
   const { user, profile, loading } = useAuth();
 
   if (loading) {
@@ -11,14 +12,14 @@ export default function AdminRoute({ children }) {
         justifyContent: "center", background: "var(--bg-page)",
         fontSize: 14, color: "var(--fg3)",
       }}>
-        확인 중…
+        불러오는 중…
       </div>
     );
   }
 
   if (!user) return <Navigate to="/login" replace />;
 
-  if (!profile || profile.role !== "admin") {
+  if (!profile || !profile.approved) {
     return (
       <div style={{
         minHeight: "100vh", display: "flex", alignItems: "center",
@@ -26,24 +27,27 @@ export default function AdminRoute({ children }) {
       }}>
         <div style={{
           background: "var(--bg-card)", border: "1px solid var(--border)",
-          borderRadius: "var(--radius-lg)", padding: "40px 48px",
+          borderRadius: 16, padding: "48px 40px",
           textAlign: "center", maxWidth: 360,
         }}>
-          <div style={{ fontSize: 32, marginBottom: 12 }}>🔒</div>
+          <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
           <div style={{ fontSize: 16, fontWeight: 600, color: "var(--fg1)", marginBottom: 8 }}>
-            접근 권한 없음
+            승인 대기 중
           </div>
-          <div style={{ fontSize: 13, color: "var(--fg3)", marginBottom: 24 }}>
-            이 페이지는 관리자만 접근할 수 있습니다.
+          <div style={{ fontSize: 13, color: "var(--fg3)", marginBottom: 24, lineHeight: 1.7 }}>
+            관리자의 접근 승인을 기다리고 있습니다.<br />
+            승인 후 다시 로그인해 주세요.
           </div>
-          <a href="/" style={{
-            display: "inline-block", padding: "10px 24px",
-            background: "var(--primary-500)", color: "#fff",
-            borderRadius: "var(--radius-md)", fontSize: 13,
-            fontWeight: 600, textDecoration: "none",
-          }}>
-            홈으로 돌아가기
-          </a>
+          <button
+            onClick={() => supabase.auth.signOut()}
+            style={{
+              padding: "10px 24px", background: "transparent",
+              border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)",
+              fontSize: 13, color: "var(--fg2)", cursor: "pointer",
+            }}
+          >
+            로그아웃
+          </button>
         </div>
       </div>
     );
