@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase.js";
+import { useAuth } from "./auth/AuthContext.jsx";
 import { MENUS, SCREEN_TITLE } from "./constants.js";
 import CalendarScreen from "./components/CalendarScreen.jsx";
 import LSafeScreen from "./components/LSafeScreen.jsx";
@@ -11,6 +12,7 @@ import NewsScreen from "./components/NewsScreen.jsx";
 import VocScreen from "./components/VocScreen.jsx";
 
 export default function App() {
+  const { profile } = useAuth();
   const [screen, setScreen] = useState("home");
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
@@ -159,11 +161,26 @@ export default function App() {
           ))}
         </nav>
 
-        {/* 하단 갱신 정보 */}
+        {/* 하단 */}
         <div style={{
           padding: "12px 16px", borderTop: "1px solid var(--border)",
-          fontSize: 11, color: "var(--fg3)",
-        }}>내부 갱신: 2026-05-26</div>
+          fontSize: 11, color: "var(--fg3)", display: "flex",
+          flexDirection: "column", gap: 8,
+        }}>
+          {profile?.role === "admin" && (
+            <a href="/admin" style={{
+              display: "flex", alignItems: "center", gap: 6,
+              fontSize: 12, color: "var(--fg2)", textDecoration: "none",
+              padding: "6px 4px", borderRadius: "var(--radius-sm)",
+            }}
+              onMouseEnter={e => e.currentTarget.style.color = "var(--primary-500)"}
+              onMouseLeave={e => e.currentTarget.style.color = "var(--fg2)"}
+            >
+              ⚙️ 관리자 설정
+            </a>
+          )}
+          <span>내부 갱신: 2026-05-26</span>
+        </div>
       </aside>
 
       {/* ── 메인 영역 ── */}
