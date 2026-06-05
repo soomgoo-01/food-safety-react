@@ -40,12 +40,6 @@ export default function LoginPage() {
     });
   }
 
-  async function signInWithKakao() {
-    await supabase.auth.signInWithOAuth({
-      provider: "kakao",
-      options: { redirectTo: REDIRECT },
-    });
-  }
 
   return (
     <div style={{
@@ -84,20 +78,6 @@ export default function LoginPage() {
             Google로 시작하기
           </button>
 
-          <button onClick={signInWithKakao} style={{
-            width: "100%", padding: "12px 16px", border: "none",
-            borderRadius: "var(--radius-md)", background: "#FEE500", cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-            fontSize: 14, fontWeight: 500, color: "#3C1E1E", transition: "background 0.15s",
-          }}
-            onMouseEnter={e => e.currentTarget.style.background = "#F5DB00"}
-            onMouseLeave={e => e.currentTarget.style.background = "#FEE500"}
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18">
-              <path fillRule="evenodd" clipRule="evenodd" d="M9 0C4.029 0 0 3.134 0 7c0 2.505 1.607 4.704 4.033 5.944L3.07 16.64a.35.35 0 0 0 .524.38L8.1 14.19c.298.028.6.043.9.043 4.971 0 9-3.134 9-7S13.971 0 9 0z" fill="#3C1E1E" />
-            </svg>
-            카카오로 시작하기
-          </button>
         </div>
 
         <p style={{ fontSize: 11, color: "var(--fg3)", marginTop: 28, lineHeight: 1.6 }}>
