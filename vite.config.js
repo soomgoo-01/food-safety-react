@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import Anthropic from '@anthropic-ai/sdk'
+import { handleChat } from './api/_lib.js'
 
 const MAX_LENGTH = 2000
 
@@ -105,6 +106,62 @@ function vocApiPlugin(apiKey) {
   }
 }
 
+function chatApiPlugin(env) {
+  return {
+    name: 'chat-api',
+    configureServer(server) {
+      server.middlewares.use('/api/chat', (req, res) => {
+        if (req.method !== 'POST') {
+          res.writeHead(405)
+          res.end()
+          return
+        }
+
+        let body = ''
+        req.on('data', (chunk) => { body += chunk })
+        req.on('end', async () => {
+          res.setHeader('Content-Type', 'application/json')
+
+          let text
+          try {
+            text = JSON.parse(body).text
+          } catch {
+            res.writeHead(400)
+            res.end(JSON.stringify({ error: 'invalid_input', message: '요청 형식이 올바르지 않습니다.' }))
+            return
+          }
+
+          if (!text || typeof text !== 'string' || text.trim().length === 0) {
+            res.writeHead(400)
+            res.end(JSON.stringify({ error: 'invalid_input', message: '텍스트를 입력해주세요.' }))
+            return
+          }
+
+          if (text.length > MAX_LENGTH) {
+            res.writeHead(400)
+            res.end(JSON.stringify({ error: 'invalid_input', message: `텍스트는 ${MAX_LENGTH}자 이하여야 합니다.` }))
+            return
+          }
+
+          try {
+            const result = await handleChat(text.trim(), {
+              ANTHROPIC_API_KEY: env.ANTHROPIC_API_KEY,
+              SUPABASE_URL: env.VITE_SUPABASE_URL,
+              SUPABASE_ANON_KEY: env.VITE_SUPABASE_ANON_KEY,
+            })
+            res.writeHead(200)
+            res.end(JSON.stringify(result))
+          } catch (err) {
+            console.error('[chat-api] error:', err.message)
+            res.writeHead(502)
+            res.end(JSON.stringify({ error: 'upstream_error' }))
+          }
+        })
+      })
+    },
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
@@ -112,6 +169,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       vocApiPlugin(env.ANTHROPIC_API_KEY),
+      chatApiPlugin(env),
     ],
   }
 })

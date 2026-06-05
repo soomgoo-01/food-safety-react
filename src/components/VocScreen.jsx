@@ -121,7 +121,19 @@ function UserBubble({ text }) {
   );
 }
 
-function AiBubble({ result, error }) {
+function AnswerBubble({ answer }) {
+  return (
+    <div style={{
+      background: "var(--bg-card)", border: "1px solid var(--border)",
+      borderRadius: "var(--radius-lg)", borderTopLeftRadius: 4, padding: "12px 14px",
+    }}>
+      <p style={{ fontSize: 9, fontWeight: 700, color: "var(--fg3)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 8px" }}>데이터 답변</p>
+      <p style={{ fontSize: 13, color: "var(--fg1)", lineHeight: 1.75, margin: 0, whiteSpace: "pre-wrap" }}>{answer}</p>
+    </div>
+  );
+}
+
+function AiBubble({ result, answer, error }) {
   return (
     <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 14 }}>
       <AiAvatar />
@@ -141,6 +153,8 @@ function AiBubble({ result, error }) {
           }}>
             <AnalysisCard result={result} />
           </div>
+        ) : answer ? (
+          <AnswerBubble answer={answer} />
         ) : null}
       </div>
     </div>
@@ -180,19 +194,20 @@ function EmptyState() {
           <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
         </svg>
       </div>
-      <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--fg1)", margin: "0 0 8px" }}>VOC 분석을 시작하세요</h3>
-      <p style={{ fontSize: 12, color: "var(--fg3)", lineHeight: 1.7, margin: 0, maxWidth: 320 }}>
-        고객 피드백 텍스트를 입력하면<br />
-        감정 · 요약 · 키워드 · 카테고리 · 긴급도를 자동 분석합니다.
+      <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--fg1)", margin: "0 0 8px" }}>무엇이든 물어보세요</h3>
+      <p style={{ fontSize: 12, color: "var(--fg3)", lineHeight: 1.7, margin: 0, maxWidth: 340 }}>
+        고객 VOC를 입력하면 자동 분석하고,<br />
+        식품 안전 데이터에 대한 질문도 답변합니다.
       </p>
-      <div style={{
-        marginTop: 18, background: "var(--bg-card)", border: "1px solid var(--border)",
-        borderRadius: "var(--radius-lg)", padding: "14px 18px", maxWidth: 340, textAlign: "left",
-      }}>
-        <p style={{ fontSize: 9, fontWeight: 700, color: "var(--fg3)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 8px" }}>예시 VOC</p>
-        <p style={{ fontSize: 12, color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          배송이 너무 늦어서 실망했어요. 3일 기다렸는데 아직도 안 왔습니다. 빠른 처리 부탁드립니다.
-        </p>
+      <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 8, maxWidth: 340, width: "100%", textAlign: "left" }}>
+        <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: "12px 16px" }}>
+          <p style={{ fontSize: 9, fontWeight: 700, color: "var(--fg3)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 6px" }}>VOC 분석 예시</p>
+          <p style={{ fontSize: 12, color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>배송이 너무 늦어서 실망했어요. 3일 기다렸는데 아직도 안 왔습니다.</p>
+        </div>
+        <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: "12px 16px" }}>
+          <p style={{ fontSize: 9, fontWeight: 700, color: "var(--primary-500)", textTransform: "uppercase", letterSpacing: "0.06em", margin: "0 0 6px" }}>데이터 질문 예시</p>
+          <p style={{ fontSize: 12, color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>최근 부적합 현황 알려줘 · 수입 리스크 높은 나라는?</p>
+        </div>
       </div>
     </div>
   );
@@ -228,7 +243,7 @@ export default function VocScreen() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("/api/analyze", {
+      const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
@@ -237,8 +252,11 @@ export default function VocScreen() {
 
       if (!res.ok) {
         setMessages(prev => [...prev, { id: crypto.randomUUID(), role: "assistant", error: data.message ?? "분석 중 오류가 발생했습니다." }]);
+      } else if (data.type === "answer") {
+        setMessages(prev => [...prev, { id: crypto.randomUUID(), role: "assistant", answer: data.text }]);
       } else {
-        setMessages(prev => [...prev, { id: crypto.randomUUID(), role: "assistant", result: data }]);
+        const { type: _, ...result } = data;
+        setMessages(prev => [...prev, { id: crypto.randomUUID(), role: "assistant", result }]);
       }
     } catch {
       setMessages(prev => [...prev, { id: crypto.randomUUID(), role: "assistant", error: "네트워크 오류가 발생했습니다." }]);
@@ -273,7 +291,7 @@ export default function VocScreen() {
             {messages.map(msg => (
               msg.role === "user"
                 ? <UserBubble key={msg.id} text={msg.text} />
-                : <AiBubble key={msg.id} result={msg.result} error={msg.error} />
+                : <AiBubble key={msg.id} result={msg.result} answer={msg.answer} error={msg.error} />
             ))}
             {isLoading && <TypingBubble />}
             <div ref={bottomRef} />
