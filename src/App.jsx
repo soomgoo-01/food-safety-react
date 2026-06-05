@@ -107,45 +107,85 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ fontFamily: "'Pretendard','Apple SD Gothic Neo',sans-serif", minHeight: "100vh", background: "#f4f5f7", display: "flex" }}>
-      <div style={{ width: 200, background: "#111", flexShrink: 0, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <div style={{ padding: "20px 16px 16px", borderBottom: "1px solid #222" }}>
-          <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", lineHeight: 1.3 }}>식품안전<br />모니터링</div>
-          <div style={{ fontSize: 10, color: "#6b7280", marginTop: 4 }}>외부 갱신: 오늘</div>
+    <div style={{ minHeight: "100vh", background: "var(--bg-page)", display: "flex" }}>
+      {/* ── 사이드바 ── */}
+      <aside style={{
+        width: 220, flexShrink: 0, background: "var(--bg-card)",
+        borderRight: "1px solid var(--border)", display: "flex",
+        flexDirection: "column", minHeight: "100vh",
+      }}>
+        {/* 로고 */}
+        <div style={{ padding: "20px 16px 16px", borderBottom: "1px solid var(--border)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{
+              width: 28, height: 28, borderRadius: 8,
+              background: "var(--primary-500)", display: "flex",
+              alignItems: "center", justifyContent: "center", flexShrink: 0,
+            }}>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M7 1L9.5 5.5H12.5L10 8.5L11 13L7 10.5L3 13L4 8.5L1.5 5.5H4.5L7 1Z" fill="white" fillOpacity="0.9"/>
+              </svg>
+            </div>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "var(--fg1)", lineHeight: 1.2 }}>식품안전</div>
+              <div style={{ fontSize: 11, color: "var(--fg3)", lineHeight: 1.2 }}>모니터링</div>
+            </div>
+          </div>
         </div>
-        <nav style={{ flex: 1, padding: "12px 0", overflowY: "auto" }}>
+
+        {/* 네비게이션 */}
+        <nav style={{ flex: 1, padding: "12px 10px", overflowY: "auto" }}>
           {MENUS.map(group => (
-            <div key={group.group} style={{ marginBottom: 4 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#4b5563", padding: "8px 16px 4px", letterSpacing: "0.06em", textTransform: "uppercase" }}>{group.group}</div>
-              {group.items.map(item => (
-                <button key={item.key} onClick={() => setScreen(item.key)} style={{
-                  width: "100%", textAlign: "left", padding: "8px 16px",
-                  background: screen === item.key ? "#1f2937" : "transparent",
-                  color: screen === item.key ? "#fff" : "#9ca3af", border: "none", cursor: "pointer",
-                  fontSize: 12, fontWeight: screen === item.key ? 600 : 400,
-                  borderLeft: screen === item.key ? "3px solid #3b82f6" : "3px solid transparent",
-                  transition: "all 0.1s",
-                }}>{item.label}</button>
-              ))}
+            <div key={group.group} style={{ marginBottom: 16 }}>
+              <div style={{
+                fontSize: 10, fontWeight: 700, color: "var(--fg3)",
+                padding: "0 6px 6px", letterSpacing: "0.06em", textTransform: "uppercase",
+              }}>{group.group}</div>
+              {group.items.map(item => {
+                const isActive = screen === item.key;
+                return (
+                  <button key={item.key} onClick={() => setScreen(item.key)} style={{
+                    width: "100%", textAlign: "left", padding: "8px 10px",
+                    background: isActive ? "var(--primary-50)" : "transparent",
+                    color: isActive ? "var(--primary-700)" : "var(--fg2)",
+                    border: "none", borderRadius: "var(--radius-md)", cursor: "pointer",
+                    fontSize: 13, fontWeight: isActive ? 600 : 400,
+                    display: "block", marginBottom: 2, transition: "all 0.1s",
+                  }}>{item.label}</button>
+                );
+              })}
             </div>
           ))}
         </nav>
-        <div style={{ padding: "12px 16px", borderTop: "1px solid #222", fontSize: 11, color: "#4b5563" }}>내부 갱신: 2026-05-26</div>
-      </div>
 
+        {/* 하단 갱신 정보 */}
+        <div style={{
+          padding: "12px 16px", borderTop: "1px solid var(--border)",
+          fontSize: 11, color: "var(--fg3)",
+        }}>내부 갱신: 2026-05-26</div>
+      </aside>
+
+      {/* ── 메인 영역 ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "14px 28px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: "#111" }}>{SCREEN_TITLE[screen]}</div>
-          <div style={{ fontSize: 12, color: "#9ca3af" }}>식품안전팀 · 2026-05-28</div>
-        </div>
-        <div style={{ flex: 1, padding: 24, overflowY: "auto" }}>
+        {/* 헤더 */}
+        <header style={{
+          background: "var(--bg-card)", borderBottom: "1px solid var(--border)",
+          padding: "0 28px", height: 52, display: "flex",
+          justifyContent: "space-between", alignItems: "center", flexShrink: 0,
+        }}>
+          <div style={{ fontSize: 15, fontWeight: 600, color: "var(--fg1)" }}>{SCREEN_TITLE[screen]}</div>
+          <div style={{ fontSize: 12, color: "var(--fg3)" }}>식품안전팀 · 2026-05-28</div>
+        </header>
+
+        {/* 콘텐츠 */}
+        <main style={{ flex: 1, padding: 24, overflowY: "auto" }}>
           {loading && (
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 200, color: "#6b7280", fontSize: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 200, color: "var(--fg3)", fontSize: 14 }}>
               데이터 불러오는 중…
             </div>
           )}
           {fetchError && (
-            <div style={{ background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: 8, padding: "12px 16px", marginBottom: 16, fontSize: 13, color: "#dc2626" }}>
+            <div style={{ background: "var(--color-error-bg)", border: "1px solid var(--red-200)", borderRadius: "var(--radius-md)", padding: "12px 16px", marginBottom: 16, fontSize: 13, color: "var(--color-error-text)" }}>
               Supabase 연결 오류: {fetchError}
             </div>
           )}
@@ -157,9 +197,11 @@ export default function App() {
           {!loading && screen === "import" && <ImportScreen importRisk={importRisk} />}
           {!loading && screen === "news" && <NewsScreen news={news} />}
           {screen === "report" && (
-            <div style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, padding: 32, textAlign: "center", color: "#9ca3af" }}>알림 & 리포트 화면은 2단계 구현 예정입니다.</div>
+            <div style={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", padding: 32, textAlign: "center", color: "var(--fg3)" }}>
+              알림 &amp; 리포트 화면은 2단계 구현 예정입니다.
+            </div>
           )}
-        </div>
+        </main>
       </div>
     </div>
   );

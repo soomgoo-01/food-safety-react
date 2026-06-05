@@ -1,0 +1,73 @@
+/* ============================================================
+   FOOD SAFETY DASHBOARD · DESIGN TOKENS
+   ============================================================ */
+
+:root {
+  /* Primary · Forest Green */
+  --primary-50:  #E8F5EF;
+  --primary-100: #B8E3CE;
+  --primary-300: #5DBE96;
+  --primary-500: #1A8754;
+  --primary-700: #0D5435;
+
+  /* Data Blue */
+  --blue-50:  #E6F1FB;
+  --blue-100: #B5D4F4;
+  --blue-500: #378ADD;
+  --blue-700: #185FA5;
+
+  /* Alert Red */
+  --red-50:  #FDECEA;
+  --red-200: #F4A99E;
+  --red-500: #E05C3F;
+  --red-700: #9E3A26;
+
+  /* Neutral */
+  --gray-0:   #FFFFFF;
+  --gray-50:  #F7F6F3;
+  --gray-100: #EDECEA;
+  --gray-300: #C9C8C2;
+  --gray-500: #888680;
+  --gray-700: #444340;
+  --gray-900: #1C1C1A;
+
+  /* Semantic */
+  --color-success-bg:   #DCFAEE;
+  --color-success-text: #0D6640;
+  --color-success:      #1A8754;
+
+  --color-warning-bg:   #FDECEA;
+  --color-warning-text: #9E3A26;
+  --color-warning:      #E05C3F;
+
+  --color-error-bg:     #FDEAEA;
+  --color-error-text:   #A32D2D;
+  --color-error:        #D0302F;
+
+  --color-info-bg:      #E6F1FB;
+  --color-info-text:    #185FA5;
+  --color-info:         #378ADD;
+
+  /* Role aliases */
+  --bg-page:     var(--gray-50);
+  --bg-card:     var(--gray-0);
+  --fg1:         var(--gray-900);
+  --fg2:         var(--gray-700);
+  --fg3:         var(--gray-500);
+  --fg-accent:   var(--primary-500);
+  --border:      var(--gray-100);
+  --border-strong: var(--gray-300);
+
+  /* Radius */
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-pill: 999px;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+}
