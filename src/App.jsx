@@ -8,6 +8,7 @@ import HomeScreen from "./components/HomeScreen.jsx";
 import NoncompliantScreen from "./components/NoncompliantScreen.jsx";
 import ImportScreen from "./components/ImportScreen.jsx";
 import NewsScreen from "./components/NewsScreen.jsx";
+import VocScreen from "./components/VocScreen.jsx";
 
 export default function App() {
   const [screen, setScreen] = useState("home");
@@ -178,13 +179,17 @@ export default function App() {
         </header>
 
         {/* 콘텐츠 */}
-        <main style={{ flex: 1, padding: 24, overflowY: "auto" }}>
-          {loading && (
+        <main style={{
+          flex: 1, overflowY: screen === "voc" ? "hidden" : "auto",
+          padding: screen === "voc" ? 0 : 24,
+          display: "flex", flexDirection: "column", position: "relative",
+        }}>
+          {screen !== "voc" && loading && (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 200, color: "var(--fg3)", fontSize: 14 }}>
               데이터 불러오는 중…
             </div>
           )}
-          {fetchError && (
+          {screen !== "voc" && fetchError && (
             <div style={{ background: "var(--color-error-bg)", border: "1px solid var(--red-200)", borderRadius: "var(--radius-md)", padding: "12px 16px", marginBottom: 16, fontSize: 13, color: "var(--color-error-text)" }}>
               Supabase 연결 오류: {fetchError}
             </div>
@@ -201,6 +206,7 @@ export default function App() {
               알림 &amp; 리포트 화면은 2단계 구현 예정입니다.
             </div>
           )}
+          {screen === "voc" && <VocScreen />}
         </main>
       </div>
     </div>

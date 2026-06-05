@@ -18,6 +18,9 @@ export const MENUS = [
   { group:"알림·리포트", items:[
     {key:"report",label:"⑧ 알림 & 리포트"},
   ]},
+  { group:"AI 분석", items:[
+    {key:"voc",label:"⑨ VOC AI 분석"},
+  ]},
 ];
 
 export const SCREEN_TITLE = {
@@ -29,4 +32,5 @@ export const SCREEN_TITLE = {
   import:"⑥ 수입식품 리스크",
   news:"⑦ 뉴스 모니터링",
   report:"⑧ 알림 & 리포트",
+  voc:"⑨ VOC AI 분석",
 };
